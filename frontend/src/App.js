@@ -5,8 +5,7 @@ import './App.css';
 function App() {
   const [formData, setFormData] = useState({
     vid: '',
-    telegramId: '',
-    simbreefLink: ''
+    telegramId: ''
   });
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -26,7 +25,7 @@ function App() {
     try {
       const response = await axios.post('/api/users/subscribe', formData);
       setMessage('✅ Subscription created successfully! You will receive notifications on Telegram.');
-      setFormData({ vid: '', telegramId: '', simbreefLink: '' });
+      setFormData({ vid: '', telegramId: '' });
     } catch (error) {
       setMessage('❌ Error: ' + (error.response?.data?.error || error.message));
     } finally {
@@ -69,19 +68,6 @@ function App() {
             />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="simbreefLink">SimBrief Flight Plan Link</label>
-            <input
-              type="url"
-              id="simbreefLink"
-              name="simbreefLink"
-              placeholder="https://www.simbrief.com/api/xml.fetcher.php?username=..."
-              value={formData.simbreefLink}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
           <button type="submit" disabled={loading}>
             {loading ? 'Subscribing...' : 'Start Monitoring'}
           </button>
@@ -94,7 +80,6 @@ function App() {
           <ol>
             <li>Enter your IVAO VID (pilot ID)</li>
             <li>Add your Telegram ID to receive notifications</li>
-            <li>Link your SimBrief flight plan</li>
             <li>Receive real-time notifications when ATCs come online on your route!</li>
           </ol>
         </section>
