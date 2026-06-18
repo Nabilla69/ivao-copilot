@@ -1,1 +1,61 @@
-const express = require('express');\nconst router = express.Router();\n\n// In-memory storage\nconst users = new Map();\n\nrouter.post('/subscribe', (req, res) => {\n  try {\n    const { vid, telegramId, simbreefLink } = req.body;\n\n    if (!vid || !telegramId || !simbreefLink) {\n      return res.status(400).json({ error: 'Missing required fields' });\n    }\n\n    const user = {\n      vid,\n      telegramId,\n      simbreefLink,\n      active: true,\n      createdAt: new Date()\n    };\n\n    users.set(vid, user);\n    res.status(201).json({ message: 'Subscription created', user });\n  } catch (error) {\n    res.status(500).json({ error: error.message });\n  }\n});\n\nrouter.get('/:vid', (req, res) => {\n  try {\n    const user = users.get(req.params.vid);\n    if (!user) return res.status(404).json({ error: 'User not found' });\n    res.json(user);\n  } catch (error) {\n    res.status(500).json({ error: error.message });\n  }\n});\n\nrouter.put('/:vid', (req, res) => {\n  try {\n    const user = users.get(req.params.vid);\n    if (!user) return res.status(404).json({ error: 'User not found' });\n    \n    const updatedUser = { ...user, ...req.body };\n    users.set(req.params.vid, updatedUser);\n    res.json(updatedUser);\n  } catch (error) {\n    res.status(500).json({ error: error.message });\n  }\n});\n\nrouter.delete('/:vid', (req, res) => {\n  try {\n    users.delete(req.params.vid);\n    res.json({ message: 'Subscription deleted' });\n  } catch (error) {\n    res.status(500).json({ error: error.message });\n  }\n});\n\nmodule.exports = router;\n
+const express = require('express');
+const router = express.Router();
+
+// In-memory storage
+const users = new Map();
+
+router.post('/subscribe', (req, res) => {
+  try {
+    const { vid, telegramId } = req.body;
+
+    if (!vid || !telegramId) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const user = {
+      vid,
+      telegramId,
+      active: true,
+      createdAt: new Date()
+    };
+
+    users.set(vid, user);
+    res.status(201).json({ message: 'Subscription created', user });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/:vid', (req, res) => {
+  try {
+    const user = users.get(req.params.vid);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.put('/:vid', (req, res) => {
+  try {
+    const user = users.get(req.params.vid);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    
+    const updatedUser = { ...user, ...req.body };
+    users.set(req.params.vid, updatedUser);
+    res.json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.delete('/:vid', (req, res) => {
+  try {
+    users.delete(req.params.vid);
+    res.json({ message: 'Subscription deleted' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+module.exports = router;
